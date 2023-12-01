@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Search</title>
+</head>
+
+<body>
+    <h1>Bus Search</h1>
+    <form action="/find_bus" method="POST" onsubmit="return validateForm()"> 
+        <label for="source_city">Source City:</label>
+        <select id="source_city" name="source_city">
+            {% for city in cities %}
+            <option value="{{ city }}">{{ city }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="dest_city">Destination City:</label>
+        <select id="dest_city" name="dest_city">
+            {% for city in cities %}
+            <option value="{{ city }}">{{ city }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Find Bus</button>
+    </form>
+    <br>
+    <br>
+    <a href="{{ url_for('logout') }}">Logout</a>
+    <br>
+    <script>
+        function validateForm() {
+            const sourceCity = document.getElementById('source_city').value;
+            const destCity = document.getElementById('dest_city').value;
+
+            if (sourceCity === destCity) {
+                alert('Source and destination cities cannot be the same.');
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</body>
+
+</html>

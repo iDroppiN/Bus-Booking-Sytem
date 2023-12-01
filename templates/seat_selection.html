@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seat Selection</title>
+    <style>
+        .seat {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            display: inline-block;
+            cursor: pointer;
+            background-color: green;
+        }
+
+        .booked {
+            background-color: red;
+        }
+
+        .selected {
+            background-color: yellow;
+        }
+
+        .row {
+            clear: both;
+            margin-top: 25px;
+        }
+
+        .row.first-two {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Bus {{ bus.id }} - Seat Selection</h1>
+    <p>From {{ bus.route[0] }} to {{ bus.route[1] }}</p>
+    <!-- {% for seat in bus.seats %}
+    <div id="seat-{{ seat.id }}" class="seat{% if seat.booked %} booked{% endif %}" onclick="bookSeat({{ seat.id }})">
+    </div>
+    {% endfor %} -->
+    {% for row in range(1, 4) %}
+    <div class="row{% if row <= 2 %} first-two{% endif %}">
+        {% for seat in range(1, 11) %}
+        {% set seat_id = (row - 1) * 10 + seat %}
+        <div id="seat-{{ seat_id }}" class="seat{% if bus.seats[seat_id - 1].booked %} booked{% endif %}"
+            onclick="bookSeat({{ seat_id }})"></div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+    <br>
+    <button onclick="submitBooking()">Book Selected Seat</button>
+    <br>
+    <br>
+    <br>
+    <a href="/bus_search">Home</a>
+    <br>
+    <a href="{{ url_for('logout') }}">Logout</a>
+    <script>
+        let selectedSeatId = null;
+
+        function bookSeat(seatId) {
+            const seatElement = document.getElementById(`seat-${seatId}`);
+
+            if (selectedSeatId !== null) {
+                // Unselect the previously selected seat
+                const prevSelectedSeatElement = document.getElementById(`seat-${selectedSeatId}`);
+                prevSelectedSeatElement.classList.remove('selected');
+            }
+
+            if (selectedSeatId !== seatId) {
+                // Select the new seat
+                seatElement.classList.add('selected');
+                selectedSeatId = seatId;
+            } else {
+                // Unselect the currently selected seat
+                selectedSeatId = null;
+            }
+        }
+
+        function submitBooking() {
+            if (selectedSeatId === null) {
+                alert('Please select a seat to book.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('bus_id', {{ bus.id }});
+            formData.append('seat_id', selectedSeatId);
+
+            fetch('/book_seat', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    location.reload();
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        </script>
+    </body>
+
+</html>
+
+

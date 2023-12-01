@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Selection</title>
+</head>
+
+<body>
+    <h1>Choose a Bus</h1>
+    <ul>
+        {% for bus in buses %}
+        <li><a href="{{ url_for('seat_selection', bus_id=bus.id) }}">Bus {{ bus.id }}</a></li>
+        {% endfor %}
+    </ul>
+    <br>
+    <br>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</body>
+
+</html>
